@@ -1,32 +1,51 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import Base from './Components/Tailwind/Base';
-import CreateReactScript from './Utils/CreateReactScript';
+import React, { useState, useEffect, useRef } from 'react'
+import CreateReactScript from './Utils/CreateReactScript'
+import { createRoot } from 'react-dom/client'
 
-import Sliders from './Components/Home/Sliders';
-import Indicators from './Components/Home/Indicators';
-import Weare from './Components/Home/Weare';
-import Courses from './Components/Home/Courses';
-import MoreCourses from './Components/Home/MoreCourses';
-import Testimonies from './Components/Home/Testimonies';
-import Articles from './Components/Home/Articles';
+const Home = () => {
+  const slides = new Array(17).fill(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const sliderRef = useRef(null)
 
-const Home = ({ sliders, indicators, weare, courses, testimonies, articles }) => {
+  useEffect(() => {
+    const handleScroll = () => {
+      if (sliderRef.current) {
+        const scrollPosition = window.scrollX // Cambiado a scrollX para scroll horizontal
+        const windowWidth = window.innerWidth // Tamaño de la ventana horizontalmente
+        const newIndex = Math.floor(scrollPosition / windowWidth)
+        if (newIndex !== currentImageIndex && newIndex < slides.length) {
+          setCurrentImageIndex(newIndex)
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [currentImageIndex])
+
   return (
-    <>
-      <Sliders sliders={sliders} />
-      <Indicators indicators={indicators} />
-      <Weare weare={weare} />
-      <Courses courses={courses.slice(0, 3)} />
-      <MoreCourses courses={courses.slice(3, 7)} />
-      <Testimonies testimonies={testimonies} />
-      <Articles articles={articles} />
-    </>
-  );
-};
+    <div
+      ref={sliderRef}
+      className="h-screen w-screen overflow-x-scroll snap-x snap-mandatory bg-slate-950 flex" // Ajustado para scroll horizontal
+      style={{ scrollSnapType: 'x mandatory', overflowY: 'hidden' }} // Deshabilitar scroll vertical
+    >
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className="h-screen w-screen snap-start flex-shrink-0 shadow flex items-center justify-center" // Snap horizontal
+        >
+          <img
+            src={`/assets/slides/Pagina ${index}.png`}
+            className="h-auto w-full max-w-[95vw] max-h-[95vh] bg-no-repeat bg-center shadow-2xl object-contain rounded-2xl"
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 CreateReactScript((el, properties) => {
-  createRoot(el).render(<Base {...properties}>
-    <Home {...properties} />
-  </Base>);
+  createRoot(el).render(<Home {...properties} />);
 })

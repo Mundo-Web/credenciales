@@ -62,19 +62,7 @@ class BasicController extends Controller
 
   public function reactView(Request $request)
   {
-    $summaryJpa = Aboutus::where('name', 'Resúmen')->first();
-    $socials = Social::where('visible', true)->where('status', true)->get();
-    $generals = General::select(['correlative', 'description'])
-      ->whereIn('correlative', ['terms_conditions', 'privacy_policy', 'support_phone', 'support_email', 'address', 'opening_hours'])
-      ->get();
-
-    if (Auth::check()) Auth::user()->getAllPermissions();
-
     $properties = [
-      'session' => Auth::user(),
-      'summary' => $summaryJpa->description,
-      'socials' => $socials,
-      'generals' => $generals,
       'global' => [
         'PUBLIC_RSA_KEY' => Controller::$PUBLIC_RSA_KEY,
         'APP_NAME' => env('APP_NAME', 'Trasciende'),

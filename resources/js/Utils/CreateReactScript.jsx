@@ -1,6 +1,5 @@
 import { createInertiaApp } from '@inertiajs/react'
 import { Cookies, FetchParams } from 'sode-extend-react'
-import Global from './Global';
 import 'swiper/css'
 import 'tippy.js/dist/tippy.css'
 
@@ -10,11 +9,6 @@ const CreateReactScript = (render) => {
     resolve: name => `/${name}.jsx`,
     setup: ({ el, props }) => {
       const properties = props.initialPage.props
-      if (properties?.global) {
-        for (const name in properties.global) {
-          Global.set(name, properties.global[name])
-        }
-      }
       const can = (page, ...keys) => {
         const keys2validate = []
         if (Array.isArray(page)) {
